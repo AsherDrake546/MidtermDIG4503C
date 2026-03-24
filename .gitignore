@@ -1,2 +1,5 @@
 # KinoRate — .gitignore
 # (populated as the project grows)
+
+# Copilot agent session files
+copilot-session-*.md
