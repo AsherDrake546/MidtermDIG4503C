@@ -1,107 +1,52 @@
-# KinoRate — DIG4503C Midterm Project
+# KinoRate - DIG4503C Midterm Project
 
-**KinoRate** is a movie review web application built on the XAMPP stack (Apache, MySQL/MariaDB, PHP). Users can create accounts, write and manage reviews, customize their profiles, and showcase their all-time top-5 favorite films.
+**KinoRate** is a Letterboxd-style movie review web application built with vanilla JavaScript and Supabase Auth.
 
----
+## Current Status
 
-## Project Plan
+### Phase 1: In Progress
+- User account signup/login via Supabase Auth
+- Client-side session guards for protected page routing
+- Logout from the home page when signed in
 
-### 1. Tech Stack
+## Tech Stack
+
 | Layer | Technology |
 |-------|-----------|
-| Web Server | Apache (via XAMPP) |
-| Database | MySQL / MariaDB (via phpMyAdmin) |
-| Back-end | PHP |
-| Front-end | HTML5, CSS3, JavaScript |
-| Local Dev | XAMPP |
+| Auth + Session | Supabase Auth (JS SDK) |
+| Frontend | HTML5, CSS3, JavaScript |
+| Hosting | GitHub Pages |
 
-### 2. Planned Features
+## Running Locally
 
-#### 2.1 User Accounts
-- User registration (username, email, password with hashed storage)
-- User login / logout with session management
-- Account settings page
+You can run this as a static site:
 
-#### 2.2 Profile Customisation
-- Upload and change profile picture (stored server-side, path saved in DB)
-- Public profile page displaying username, avatar, bio, and pinned favorites
+1. Ensure `js/supabase-config.js` exists with valid credentials:
 
-#### 2.3 Reviews
-- **Create** a review: movie title, score (1–10), written review body, date
-- **Edit** an existing review (author-only)
-- **Delete** a review (author-only)
-- Review listing page with pagination
-
-#### 2.4 Top-5 Favorites Pin
-- Each user can pin up to 5 favorite movies on their profile
-- Pinned films are displayed prominently on the public profile
-- Users can add, reorder, or remove pinned entries at any time
-
-### 3. Database Schema (Draft)
-
-```
-users
-  id          INT PK AUTO_INCREMENT
-  username    VARCHAR(50) UNIQUE NOT NULL
-  email       VARCHAR(100) UNIQUE NOT NULL
-  password    VARCHAR(255) NOT NULL   -- bcrypt hash
-  avatar_path VARCHAR(255)
-  bio         TEXT
-  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
-reviews
-  id          INT PK AUTO_INCREMENT
-  user_id     INT FK → users.id
-  movie_title VARCHAR(200) NOT NULL
-  score       TINYINT (1–10)
-  body        TEXT
-  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  updated_at  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-
-favorites
-  id          INT PK AUTO_INCREMENT
-  user_id     INT FK → users.id
-  movie_title VARCHAR(200) NOT NULL
-  position    TINYINT (1–5)
+```js
+const SUPABASE_URL = "your-project-url";
+const SUPABASE_ANON_KEY = "your-anon-key";
 ```
 
-### 4. Page Map
+2. Open `auth.html` directly, or run a local static server.
 
-| Page | Description |
-|------|-------------|
-| `index.html` | Public landing page |
-| `register.php` | New user registration form |
-| `login.php` | Login form |
-| `logout.php` | Session destroy + redirect |
-| `profile.php?user=<id>` | Public profile (avatar, bio, top-5, reviews) |
-| `settings.php` | Edit avatar, bio, password |
-| `reviews/create.php` | Write a new review |
-| `reviews/edit.php?id=<id>` | Edit an existing review |
-| `reviews/delete.php?id=<id>` | Delete confirmation + action |
+## Deploying to GitHub Pages
 
-### 5. Development Milestones
+1. Push this repo to GitHub.
+2. In repository settings, open **Pages**.
+3. Set source to **Deploy from a branch**.
+4. Choose branch (usually `main`) and folder `/ (root)`.
+5. Save and wait for deployment.
+6. Visit the generated Pages URL and open `auth.html`.
 
-- [ ] **M1** — Repo setup: landing page, README, `.gitignore`
-- [ ] **M2** — Database schema, XAMPP local environment configured
-- [ ] **M3** — User registration, login, logout
-- [ ] **M4** — Profile page + avatar upload
-- [ ] **M5** — Review CRUD (create, read, edit, delete)
-- [ ] **M6** — Top-5 favorites feature
-- [ ] **M7** — UI polish (dark theme, responsive layout)
-- [ ] **M8** — Testing, bug fixes, final submission
+## Project Structure
 
----
-
-## Getting Started (Local Dev)
-
-1. Install [XAMPP](https://www.apachefriends.org/) and start Apache + MySQL.
-2. Clone this repository into `htdocs/KinoRate/`.
-3. Import the SQL schema from `db/schema.sql` into phpMyAdmin.
-4. Copy `config/db.example.php` to `config/db.php` and fill in your credentials.
-5. Visit `http://localhost/KinoRate/` in your browser.
-
----
-
-## License
-
-This project is created for academic purposes as part of **DIG4503C**.
+```
+.
+├── index.html              # Protected home page (client-side session check)
+├── auth.html               # Signup/login page
+├── style.css               # Shared styling
+└── js/
+    ├── supabase-config.js  # Supabase credentials
+    └── auth.js             # Auth logic and route guards
+```

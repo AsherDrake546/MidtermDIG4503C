@@ -4,21 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KinoRate</title>
-  <link rel="stylesheet" href="style.css">
-
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-
-  <!-- Navigation -->
-  <nav>
+<body data-page="index">
+  <div id="app-shell" hidden>
+    <nav>
     <a href="#" class="nav-logo">Kino<span>Rate</span></a>
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#stack">Stack</a></li>
+      <li id="nav-user" class="nav-user"></li>
+      <li><button id="logout-button" type="button" class="btn btn-outline btn-sm">Logout</button></li>
     </ul>
   </nav>
 
-  <!-- Hero -->
   <section class="hero">
     <div class="hero-badge">Movie Review Platform</div>
     <h1>Welcome to <span class="highlight">KinoRate</span></h1>
@@ -33,7 +32,6 @@
     </div>
   </section>
 
-  <!-- Features -->
   <section class="features" id="features">
     <div class="section-header">
       <h2>Everything you <span>need</span></h2>
@@ -73,27 +71,27 @@
     </div>
   </section>
 
-  <!-- Stack -->
   <section class="stack" id="stack">
     <div class="section-header">
-      <h2>Built with the <span>XAMPP</span> Stack</h2>
-      <p>A familiar and reliable environment for rapid development.</p>
+      <h2>Built with the <span>Web + Supabase</span> Stack</h2>
+      <p>Fast static hosting with a managed auth backend.</p>
     </div>
     <div class="stack-list">
-      <span class="stack-tag">Apache</span>
-      <span class="stack-tag">MySQL / MariaDB</span>
-      <span class="stack-tag">PHP</span>
+      <span class="stack-tag">Supabase Auth</span>
       <span class="stack-tag">HTML5</span>
       <span class="stack-tag">CSS3</span>
       <span class="stack-tag">JavaScript</span>
-      <span class="stack-tag">phpMyAdmin</span>
+      <span class="stack-tag">GitHub Pages</span>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2026 KinoRate &mdash; Built as part of DIG4503C Midterm</p>
-  </footer>
+    <footer>
+      <p>&copy; 2026 KinoRate &mdash; Built as part of DIG4503C Midterm</p>
+    </footer>
+  </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
