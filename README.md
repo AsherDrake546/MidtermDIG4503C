@@ -1,107 +1,92 @@
-# KinoRate — DIG4503C Midterm Project
+# KinoRate - DIG4503C Midterm Project
 
-**KinoRate** is a movie review web application built on the XAMPP stack (Apache, MySQL/MariaDB, PHP). Users can create accounts, write and manage reviews, customize their profiles, and showcase their all-time top-5 favorite films.
+**KinoRate** is a Letterboxd-style movie review web application built with vanilla JavaScript and Supabase. Users can create accounts, write and manage reviews, customize their profiles, and showcase their favorite films.
 
 ---
 
-## Project Plan
+## Project Status
 
-### 1. Tech Stack
+### Phase 1: 🔄 In Progress
+**User Accounts** - Registration, login/logout, session persistence
+
+### Phase 2: Planned
+**Movie Reviews** - Search movies, write reviews, star ratings
+
+### Phase 3: Planned
+**Profile Customization** - Profile picture, bio, top 5 favorites
+
+---
+
+## Tech Stack
+
 | Layer | Technology |
 |-------|-----------|
-| Web Server | Apache (via XAMPP) |
-| Database | MySQL / MariaDB (via phpMyAdmin) |
-| Back-end | PHP |
-| Front-end | HTML5, CSS3, JavaScript |
-| Local Dev | XAMPP |
+| Auth + Database | Supabase |
+| Frontend | HTML5, CSS3, JavaScript |
+| Deployment | GitHub Pages |
 
-### 2. Planned Features
+## Getting Started
 
-#### 2.1 User Accounts
-- User registration (username, email, password with hashed storage)
-- User login / logout with session management
-- Account settings page
+### Running Locally
 
-#### 2.2 Profile Customisation
-- Upload and change profile picture (stored server-side, path saved in DB)
-- Public profile page displaying username, avatar, bio, and pinned favorites
+Simply open `index.html` in your browser or use any local file server:
 
-#### 2.3 Reviews
-- **Create** a review: movie title, score (1–10), written review body, date
-- **Edit** an existing review (author-only)
-- **Delete** a review (author-only)
-- Review listing page with pagination
+```bash
+# Option 1: Direct
+open index.html
 
-#### 2.4 Top-5 Favorites Pin
-- Each user can pin up to 5 favorite movies on their profile
-- Pinned films are displayed prominently on the public profile
-- Users can add, reorder, or remove pinned entries at any time
+# Option 2: With Python
+python -m http.server 8000
 
-### 3. Database Schema (Draft)
-
-```
-users
-  id          INT PK AUTO_INCREMENT
-  username    VARCHAR(50) UNIQUE NOT NULL
-  email       VARCHAR(100) UNIQUE NOT NULL
-  password    VARCHAR(255) NOT NULL   -- bcrypt hash
-  avatar_path VARCHAR(255)
-  bio         TEXT
-  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
-reviews
-  id          INT PK AUTO_INCREMENT
-  user_id     INT FK → users.id
-  movie_title VARCHAR(200) NOT NULL
-  score       TINYINT (1–10)
-  body        TEXT
-  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  updated_at  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-
-favorites
-  id          INT PK AUTO_INCREMENT
-  user_id     INT FK → users.id
-  movie_title VARCHAR(200) NOT NULL
-  position    TINYINT (1–5)
+# Option 3: With Node.js
+node -e "require('http').createServer((q,s)=>require('fs').readFile('.'+q.url,(e,d)=>s.end(d))).listen(8000)"
 ```
 
-### 4. Page Map
+Then visit `http://localhost:8000/` or open `index.html` directly.
 
-| Page | Description |
-|------|-------------|
-| `index.html` | Public landing page |
-| `register.php` | New user registration form |
-| `login.php` | Login form |
-| `logout.php` | Session destroy + redirect |
-| `profile.php?user=<id>` | Public profile (avatar, bio, top-5, reviews) |
-| `settings.php` | Edit avatar, bio, password |
-| `reviews/create.php` | Write a new review |
-| `reviews/edit.php?id=<id>` | Edit an existing review |
-| `reviews/delete.php?id=<id>` | Delete confirmation + action |
+### Environment Setup
 
-### 5. Development Milestones
+This project uses Supabase for auth and data storage. Before running locally, create a `js/supabase-config.js` file with your project credentials:
 
-- [ ] **M1** — Repo setup: landing page, README, `.gitignore`
-- [ ] **M2** — Database schema, XAMPP local environment configured
-- [ ] **M3** — User registration, login, logout
-- [ ] **M4** — Profile page + avatar upload
-- [ ] **M5** — Review CRUD (create, read, edit, delete)
-- [ ] **M6** — Top-5 favorites feature
-- [ ] **M7** — UI polish (dark theme, responsive layout)
-- [ ] **M8** — Testing, bug fixes, final submission
+```js
+const SUPABASE_URL = 'your-project-url'
+const SUPABASE_ANON_KEY = 'your-anon-key'
+```
 
----
+Your URL and anon key can be found in your Supabase project under Settings > API Keys.
 
-## Getting Started (Local Dev)
+## Project Structure
 
-1. Install [XAMPP](https://www.apachefriends.org/) and start Apache + MySQL.
-2. Clone this repository into `htdocs/KinoRate/`.
-3. Import the SQL schema from `db/schema.sql` into phpMyAdmin.
-4. Copy `config/db.example.php` to `config/db.php` and fill in your credentials.
-5. Visit `http://localhost/KinoRate/` in your browser.
+```
+.
+├── index.html              # Home / landing page
+├── auth.html               # Login/signup form
+├── style.css               # Styling
+└── js/
+    ├── supabase-config.js  # Supabase credentials (not committed)
+    └── auth.js             # Auth logic and session management
+```
 
----
+## Features
 
-## License
+### 🔄 Phase 1: User Accounts
+- [ ] User registration with validation
+- [ ] User login with password verification
+- [ ] User logout with session clearing
+- [ ] Session persistence (survives page refresh)
 
-This project is created for academic purposes as part of **DIG4503C**.
+### Planned: Phase 2 - Movie Reviews
+- [ ] Search movies via TMDB API
+- [ ] Write reviews with star ratings
+- [ ] Edit and delete reviews
+- [ ] View all reviews on profile
+
+### Planned: Phase 3 - Profile
+- [ ] Profile picture upload
+- [ ] Bio and display name
+- [ ] Top 5 favorite films
+- [ ] Public profile page
+
+## Data Storage
+
+All user data and reviews are stored in Supabase with row-level security so each user can only access their own data. Session tokens are managed automatically by the Supabase JS SDK via localStorage.
