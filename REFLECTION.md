@@ -1,0 +1,7 @@
+1. I decided to integrate more API's into my project (option C) because at the time of making the midterm project I was still fairly unfamiliar with using APIs. It was only my second time using them and I felt that I could enhance my understanding of how to use them. I also preferred that option since my project already had authentication with Supabase, and fully AI powered features seem too unreliable for me to ever see myself using them for future projects.
+
+2. The entire process was easier than I expected. I had some trouble getting the TMDB API working when doing the midterm so I expected similar friction, but I think since I was only adding to a project which already had it's core functionality working, the integration was much simpler. I had a bit of trouble with the Youtube data API not working locally, but once I updated my github repo and unpaused my Supabase account, it worked just fine. 
+
+3. Managing keys was fairly simple, both APIs I added were free and low risk so obtaining keys was as simple as signing up and copying the key. Handling errors was also simple as when requesting information of the type I was, there isn't a whole lot of specific cases. As long as there's an error handler for there being no result (ex: saying there is no trailer available or that a movie is unavailable on streaming services) there isn't much else to cover.
+
+4. If I had another week I would probably add email confirmation, but that type of feature seems harder to test quickly since I would need multiple email accounts that I can use to troubleshoot.
