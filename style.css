@@ -824,15 +824,8 @@
   font-size: 0.9rem;
 }
 
-.movie-watch-list {
-  display: grid;
-  gap: 0.4rem;
-  list-style: none;
+.movie-watch-inline {
   margin: 0;
-  padding: 0;
-}
-
-.movie-watch-item {
   color: var(--text-primary);
 }
 
