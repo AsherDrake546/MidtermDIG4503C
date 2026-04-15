@@ -26,13 +26,23 @@ const profileAvatarCache = new Map();
 function getTmdbConfig() {
   const configBase = window.appConfig?.tmdb?.apiBaseUrl;
   const configKey = window.appConfig?.tmdb?.apiKey;
-  const fallbackBase = typeof TMDB_API_BASE_URL === "string" ? TMDB_API_BASE_URL : "https://api.themoviedb.org/3";
+  const fallbackBase = typeof TMDB_API_BASE_URL === "string" && TMDB_API_BASE_URL.trim()
+    ? TMDB_API_BASE_URL.trim()
+    : "https://api.themoviedb.org/3";
   const fallbackKey = typeof TMDB_API_KEY === "string" ? TMDB_API_KEY.trim() : "";
 
   return {
     apiBaseUrl: typeof configBase === "string" && configBase.trim() ? configBase.trim() : fallbackBase,
     apiKey: typeof configKey === "string" && configKey.trim() ? configKey.trim() : fallbackKey,
   };
+}
+
+function getYoutubeApiKey() {
+  const configKey = window.appConfig?.youtube?.apiKey;
+  if (typeof configKey === "string" && configKey.trim()) {
+    return configKey.trim();
+  }
+  return typeof YOUTUBE_API_KEY === "string" && YOUTUBE_API_KEY.trim() ? YOUTUBE_API_KEY.trim() : "";
 }
 
 function getWatchmodeConfig() {
@@ -462,7 +472,7 @@ async function loadWatchProvidersForMovie(movie, container) {
 }
 
 async function loadTrailerForMovie(movie, frame) {
-  const youtubeApiKey = window.appConfig?.youtube?.apiKey;
+  const youtubeApiKey = getYoutubeApiKey();
   if (!youtubeApiKey) {
     setTrailerFrameMessage(frame, "Trailer unavailable. Add YOUTUBE_API_KEY in js/supabase-config.js.");
     return;
