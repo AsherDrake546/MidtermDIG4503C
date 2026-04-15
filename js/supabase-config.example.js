@@ -1,9 +1,9 @@
-const SUPABASE_URL = "https://jsweshvtzopsbrtffhuf.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzd2VzaHZ0em9wc2JydGZmaHVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzM0MzksImV4cCI6MjA4OTk0OTQzOX0.ztZAH2pMZ_jSMHQhcB2qKWJAnGTrxN_4twOWqDIRAOM";
+const SUPABASE_URL = "your-project-url";
+const SUPABASE_ANON_KEY = "your-anon-key";
 
 const TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
-const TMDB_API_KEY = "0b615fd08549b8b6e1416543024f6940";
-const YOUTUBE_API_KEY = "AIzaSyDtH8MJh9nPluR7ehCVp43OyyZGPX2Kn8M";
+const TMDB_API_KEY = "your-tmdb-api-key";
+const YOUTUBE_API_KEY = "your-youtube-api-key";
 
 if (!window.supabase || typeof window.supabase.createClient !== "function") {
   throw new Error("Supabase SDK failed to load.");
