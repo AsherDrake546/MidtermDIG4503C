@@ -372,10 +372,9 @@ function normalizeWatchmodeSources(payload) {
 }
 
 function renderWatchProviders(container, providers) {
-  const list = makeElement("ul", "movie-watch-list");
+  const line = makeElement("p", "movie-watch-inline");
 
-  for (const provider of providers) {
-    const item = makeElement("li", "movie-watch-item");
+  providers.forEach((provider, index) => {
     const text = provider.typeLabel ? `${provider.name} (${provider.typeLabel})` : provider.name;
 
     if (provider.url) {
@@ -383,15 +382,17 @@ function renderWatchProviders(container, providers) {
       link.href = provider.url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      item.appendChild(link);
+      line.appendChild(link);
     } else {
-      item.textContent = text;
+      line.appendChild(document.createTextNode(text));
     }
 
-    list.appendChild(item);
-  }
+    if (index < providers.length - 1) {
+      line.appendChild(document.createTextNode(", "));
+    }
+  });
 
-  container.replaceChildren(list);
+  container.replaceChildren(line);
 }
 
 async function fetchJsonOrThrow(endpoint, fallbackMessage) {
