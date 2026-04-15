@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KinoRate Movie Details</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="movie">
+  <div id="app-shell" hidden>
+    <nav>
+      <a href="index.html" class="nav-logo">Kino<span>Rate</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="search.html">Movie Search</a></li>
+        <li id="nav-user" class="nav-user"></li>
+        <li><button id="logout-button" type="button" class="btn btn-outline btn-sm">Logout</button></li>
+      </ul>
+    </nav>
+
+    <main class="movie-page">
+      <p id="movie-status" class="tmdb-status info">Loading movie details...</p>
+
+      <section id="movie-detail-card" class="movie-detail-card" aria-live="polite"></section>
+      <p id="favorite-form-status" class="tmdb-status info" hidden></p>
+
+      <section class="movie-reviews-placeholder">
+        <div class="section-header">
+          <h2>Movie <span>Reviews</span></h2>
+          <p>Reviews shown here are for this movie only.</p>
+        </div>
+        <div id="movie-user-reviews" class="reviews-list" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="review-modal" class="review-modal" hidden>
+    <div class="review-modal-backdrop" data-close-review-modal="true"></div>
+    <section class="review-modal-content" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+      <button id="review-modal-close" type="button" class="review-modal-close" aria-label="Close review form">✕</button>
+      <div class="review-modal-header">
+        <img id="review-modal-poster" class="review-modal-poster" alt="Movie poster" />
+        <div>
+          <h2 id="review-modal-title">Write Review</h2>
+          <p id="review-modal-subtitle" class="review-modal-subtitle"></p>
+        </div>
+      </div>
+
+      <form id="review-form" class="review-form">
+        <label for="review-rating">Star Rating (1-10)</label>
+        <input id="review-rating" name="rating" type="number" min="1" max="10" step="1" required />
+
+        <label for="review-text">Your Review</label>
+        <textarea id="review-text" name="reviewText" rows="6" maxlength="3000" placeholder="Write your thoughts about this movie..." required></textarea>
+
+        <p id="review-form-status" class="tmdb-status info" hidden></p>
+
+        <button type="submit" class="auth-btn">Save Review</button>
+      </form>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/movie.js"></script>
+</body>
+</html>

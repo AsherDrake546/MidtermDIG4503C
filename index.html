@@ -9,81 +9,93 @@
 <body data-page="index">
   <div id="app-shell" hidden>
     <nav>
-    <a href="#" class="nav-logo">Kino<span>Rate</span></a>
-    <ul class="nav-links">
-      <li><a href="#features">Features</a></li>
-      <li><a href="#stack">Stack</a></li>
-      <li id="nav-user" class="nav-user"></li>
-      <li><button id="logout-button" type="button" class="btn btn-outline btn-sm">Logout</button></li>
-    </ul>
-  </nav>
+      <a href="#" class="nav-logo">Kino<span>Rate</span></a>
+      <ul class="nav-links">
+        <li><a href="#movie-search">Movie Search</a></li>
+        <li><a href="#recent-reviews">Recent Reviews</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li id="nav-user" class="nav-user"></li>
+        <li><button id="logout-button" type="button" class="btn btn-outline btn-sm">Logout</button></li>
+      </ul>
+    </nav>
 
-  <section class="hero">
-    <div class="hero-badge">Movie Review Platform</div>
-    <h1>Welcome to <span class="highlight">KinoRate</span></h1>
-    <p>
-      Discover, rate, and review your favorite films. Build a personalized
-      profile, share your top&nbsp;5 picks, and join a community of passionate
-      movie lovers.
-    </p>
-    <div class="btn-group">
-      <a href="#features" class="btn btn-primary">Explore Features</a>
-      <a href="#stack" class="btn btn-outline">Tech Stack</a>
-    </div>
-  </section>
+    <section class="hero" id="movie-search">
+      <div class="hero-badge">Movie Review Platform</div>
+      <h1>Welcome to <span class="highlight">KinoRate</span></h1>
+      <p>
+        Discover, rate, and review your favorite films. Build a personalized
+        profile, share your top&nbsp;5 picks, and join a community of passionate
+        movie lovers.
+      </p>
 
-  <section class="features" id="features">
-    <div class="section-header">
-      <h2>Everything you <span>need</span></h2>
-      <p>A full-featured movie review experience built for cinephiles.</p>
-    </div>
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">🎬</div>
-        <h3>Write Reviews</h3>
-        <p>Create detailed reviews with ratings, summaries, and personal thoughts on any film.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">✏️</div>
-        <h3>Edit &amp; Delete</h3>
-        <p>Update your opinions as your tastes evolve, or remove a review entirely at any time.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">👤</div>
-        <h3>User Accounts</h3>
-        <p>Register for a personal account to keep all your reviews and favorites in one place.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🖼️</div>
-        <h3>Profile Picture</h3>
-        <p>Upload and change your profile photo to give your account a personal touch.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🏆</div>
-        <h3>Top&nbsp;5 Favorites</h3>
-        <p>Pin up to five all-time favorite movies on your public profile for everyone to see.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🌍</div>
-        <h3>Community Ratings</h3>
-        <p>See how your score compares with aggregate ratings from the KinoRate community.</p>
-      </div>
-    </div>
-  </section>
+      <form id="index-search-form" class="index-search-wrap hero-search" autocomplete="off">
+        <label for="index-movie-query">Search for a movie right now</label>
+        <div class="index-search-input-wrap">
+          <input id="index-movie-query" type="text" placeholder="Type a movie title..." aria-autocomplete="list" aria-expanded="false" aria-controls="index-suggestion-list" />
+          <button id="index-search-submit" type="submit" class="search-submit-btn" aria-label="Search movies">🔍</button>
+          <ul id="index-suggestion-list" class="suggestion-list" role="listbox" aria-label="Movie suggestions"></ul>
+        </div>
+      </form>
 
-  <section class="stack" id="stack">
-    <div class="section-header">
-      <h2>Built with the <span>Web + Supabase</span> Stack</h2>
-      <p>Fast static hosting with a managed auth backend.</p>
-    </div>
-    <div class="stack-list">
-      <span class="stack-tag">Supabase Auth</span>
-      <span class="stack-tag">HTML5</span>
-      <span class="stack-tag">CSS3</span>
-      <span class="stack-tag">JavaScript</span>
-      <span class="stack-tag">GitHub Pages</span>
-    </div>
-  </section>
+      <form id="index-user-search-form" class="index-search-wrap hero-search hero-user-search" autocomplete="off">
+        <label for="index-user-query">Search users</label>
+        <div class="index-search-input-wrap">
+          <input id="index-user-query" type="text" placeholder="Type a username..." aria-autocomplete="list" aria-expanded="false" aria-controls="index-user-suggestion-list" />
+          <button id="index-user-search-submit" type="submit" class="search-submit-btn" aria-label="Search users">🔍</button>
+          <ul id="index-user-suggestion-list" class="suggestion-list" role="listbox" aria-label="User suggestions"></ul>
+        </div>
+      </form>
+
+      <div class="btn-group">
+        <a href="#recent-reviews" class="btn btn-primary">See Recent Reviews</a>
+        <a href="#stack" class="btn btn-outline">Tech Stack</a>
+      </div>
+    </section>
+
+    <section class="recent-reviews" id="recent-reviews">
+      <div class="section-header">
+        <h2>Recent <span>Reviews</span></h2>
+        <p>Latest community reviews, newest first.</p>
+      </div>
+      <div id="recent-reviews-rail" class="recent-reviews-rail" aria-live="polite"></div>
+
+      <div class="highest-rated-header">
+        <h3>Highest Rated Movies</h3>
+        <p>Ranked by KinoRate user ratings.</p>
+      </div>
+      <div id="highest-rated-rail" class="highest-rated-rail" aria-live="polite"></div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="section-header">
+        <h2>Everything you <span>need</span></h2>
+        <p>A full-featured movie review experience built for cinephiles.</p>
+      </div>
+      <div class="cards">
+        <div class="card"><div class="card-icon">✍️</div><h3>Create &amp; Edit Reviews</h3><p>Post ratings and written reviews, then update them anytime as your opinions change.</p></div>
+        <div class="card"><div class="card-icon">👤</div><h3>Customize Your Account</h3><p>Set your username, profile picture, and bio to personalize your KinoRate profile.</p></div>
+        <div class="card"><div class="card-icon">🎬</div><h3>Search Movies</h3><p>Find films quickly with search suggestions and jump straight to movie detail pages.</p></div>
+        <div class="card"><div class="card-icon">🔎</div><h3>Search Users</h3><p>Look up other members, visit their profiles, and explore their reviews and favorites.</p></div>
+        <div class="card"><div class="card-icon">🏆</div><h3>Top&nbsp;5 Favorites</h3><p>Highlight up to five favorite films on your profile with posters and quick links.</p></div>
+        <div class="card"><div class="card-icon">📚</div><h3>Watch Lists</h3><p>Build custom movie lists to track what you want to watch later.</p></div>
+      </div>
+    </section>
+
+    <section class="stack" id="stack">
+      <div class="section-header">
+        <h2>Built with the <span>Web + Supabase</span> Stack</h2>
+        <p>Fast static hosting with a managed auth backend.</p>
+      </div>
+      <div class="stack-list">
+        <span class="stack-tag">Supabase Auth</span>
+        <span class="stack-tag">TMDB API</span>
+        <span class="stack-tag">HTML5</span>
+        <span class="stack-tag">CSS3</span>
+        <span class="stack-tag">JavaScript</span>
+        <span class="stack-tag">GitHub Pages</span>
+      </div>
+    </section>
 
     <footer>
       <p>&copy; 2026 KinoRate &mdash; Built as part of DIG4503C Midterm</p>
@@ -93,5 +105,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/index-search.js"></script>
 </body>
 </html>
