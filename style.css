@@ -764,6 +764,7 @@
 
 .movie-trailer-section {
   margin-top: 0.95rem;
+  margin-bottom: 1rem;
 }
 
 .movie-trailer-heading {
@@ -778,6 +779,7 @@
   background: #0f1015;
   aspect-ratio: 16 / 9;
   display: grid;
+  max-width: 560px;
 }
 
 .movie-trailer-embed {
