@@ -3,7 +3,25 @@ const watchlistDetailCard = document.getElementById("watchlist-detail-card");
 const watchlistItemsRail = document.getElementById("watchlist-items-rail");
 
 const IMAGE_BASE = "https://image.tmdb.org/t/p/w342";
-const TMDB_SEARCH_BASE = `${window.appConfig?.tmdb?.apiBaseUrl || "https://api.themoviedb.org/3"}/search/movie`;
+
+function getTmdbApiBaseUrl() {
+  const configBase = window.appConfig?.tmdb?.apiBaseUrl;
+  if (typeof configBase === "string" && configBase.trim()) {
+    return configBase.trim();
+  }
+  if (typeof TMDB_API_BASE_URL === "string" && TMDB_API_BASE_URL.trim()) {
+    return TMDB_API_BASE_URL.trim();
+  }
+  return "https://api.themoviedb.org/3";
+}
+
+function getTmdbApiKey() {
+  const configKey = window.appConfig?.tmdb?.apiKey;
+  if (typeof configKey === "string" && configKey.trim()) {
+    return configKey.trim();
+  }
+  return typeof TMDB_API_KEY === "string" && TMDB_API_KEY.trim() ? TMDB_API_KEY.trim() : "";
+}
 
 let currentSession = null;
 let currentWatchlist = null;
@@ -40,12 +58,12 @@ function getWatchlistIdParam() {
 }
 
 async function searchMoviesByTitle(query) {
-  const apiKey = window.appConfig?.tmdb?.apiKey;
+  const apiKey = getTmdbApiKey();
   if (typeof apiKey !== "string" || !apiKey.trim()) {
     throw new Error("TMDB API key is missing.");
   }
 
-  const endpoint = `${TMDB_SEARCH_BASE}?api_key=${encodeURIComponent(apiKey)}&query=${encodeURIComponent(query)}&include_adult=false&page=1`;
+  const endpoint = `${getTmdbApiBaseUrl()}/search/movie?api_key=${encodeURIComponent(apiKey)}&query=${encodeURIComponent(query)}&include_adult=false&page=1`;
   const response = await fetch(endpoint);
   const payload = await response.json();
 

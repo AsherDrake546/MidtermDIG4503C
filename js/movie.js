@@ -23,6 +23,18 @@ let favoriteToggleButton = null;
 let kinoRateUserRatingMeta = null;
 const profileAvatarCache = new Map();
 
+function getTmdbConfig() {
+  const configBase = window.appConfig?.tmdb?.apiBaseUrl;
+  const configKey = window.appConfig?.tmdb?.apiKey;
+  const fallbackBase = typeof TMDB_API_BASE_URL === "string" ? TMDB_API_BASE_URL : "https://api.themoviedb.org/3";
+  const fallbackKey = typeof TMDB_API_KEY === "string" ? TMDB_API_KEY.trim() : "";
+
+  return {
+    apiBaseUrl: typeof configBase === "string" && configBase.trim() ? configBase.trim() : fallbackBase,
+    apiKey: typeof configKey === "string" && configKey.trim() ? configKey.trim() : fallbackKey,
+  };
+}
+
 function setMovieStatus(message, kind = "info") {
   if (!movieStatus) {
     return;
@@ -531,7 +543,7 @@ function renderMovieDetail(movie) {
 
 async function loadMoviePage() {
   const movieIdRaw = new URLSearchParams(window.location.search).get("id");
-  const tmdbConfig = window.appConfig?.tmdb;
+  const tmdbConfig = getTmdbConfig();
 
   if (!movieIdRaw) {
     setMovieStatus("No movie id provided.", "error");

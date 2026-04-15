@@ -9,8 +9,19 @@ const userSuggestionList = document.getElementById("index-user-suggestion-list")
 const recentReviewsRail = document.getElementById("recent-reviews-rail");
 const highestRatedRail = document.getElementById("highest-rated-rail");
 
-const tmdbConfig = window.appConfig?.tmdb;
 const imageBase = "https://image.tmdb.org/t/p/w92";
+
+function getTmdbConfig() {
+  const configBase = window.appConfig?.tmdb?.apiBaseUrl;
+  const configKey = window.appConfig?.tmdb?.apiKey;
+  const fallbackBase = typeof TMDB_API_BASE_URL === "string" ? TMDB_API_BASE_URL : "https://api.themoviedb.org/3";
+  const fallbackKey = typeof TMDB_API_KEY === "string" ? TMDB_API_KEY.trim() : "";
+
+  return {
+    apiBaseUrl: typeof configBase === "string" && configBase.trim() ? configBase.trim() : fallbackBase,
+    apiKey: typeof configKey === "string" && configKey.trim() ? configKey.trim() : fallbackKey,
+  };
+}
 
 function goToSearchPage(query) {
   const trimmed = query.trim();
@@ -175,6 +186,7 @@ function setupMovieTypeahead() {
   }
 
   async function fetchSuggestions(query, localRequestId) {
+    const tmdbConfig = getTmdbConfig();
     if (!tmdbConfig?.apiKey) {
       renderInfo("TMDB API key is missing in js/supabase-config.js", "error");
       return;
