@@ -35,6 +35,20 @@ function getTmdbConfig() {
   };
 }
 
+function getWatchmodeConfig() {
+  const configBase = window.appConfig?.watchmode?.apiBaseUrl;
+  const configKey = window.appConfig?.watchmode?.apiKey;
+  const fallbackBase = typeof WATCHMODE_API_BASE_URL === "string" && WATCHMODE_API_BASE_URL.trim()
+    ? WATCHMODE_API_BASE_URL.trim()
+    : "https://api.watchmode.com/v1";
+  const fallbackKey = typeof WATCHMODE_API_KEY === "string" ? WATCHMODE_API_KEY.trim() : "";
+
+  return {
+    apiBaseUrl: typeof configBase === "string" && configBase.trim() ? configBase.trim() : fallbackBase,
+    apiKey: typeof configKey === "string" && configKey.trim() ? configKey.trim() : fallbackKey,
+  };
+}
+
 function setMovieStatus(message, kind = "info") {
   if (!movieStatus) {
     return;
@@ -264,6 +278,186 @@ function createTrailerSection() {
 
 function setTrailerFrameMessage(frame, message) {
   frame.replaceChildren(makeElement("p", "movie-trailer-status", message));
+}
+
+function createWhereToWatchSection() {
+  const section = makeElement("section", "movie-watch-section");
+  const heading = makeElement("h2", "movie-watch-heading", "Where to Watch");
+  const providers = makeElement("div", "movie-watch-providers");
+  providers.appendChild(makeElement("p", "movie-watch-status", "Loading availability..."));
+  section.appendChild(heading);
+  section.appendChild(providers);
+  return { section, providers };
+}
+
+function setWatchProvidersMessage(container, message) {
+  container.replaceChildren(makeElement("p", "movie-watch-status", message));
+}
+
+function extractWatchmodeTitleId(payload, movie) {
+  const rawResults = Array.isArray(payload?.title_results)
+    ? payload.title_results
+    : Array.isArray(payload?.results)
+      ? payload.results
+      : [];
+
+  if (rawResults.length === 0) {
+    return null;
+  }
+
+  const movieOnly = rawResults.filter((item) => {
+    const type = typeof item?.type === "string" ? item.type.toLowerCase() : "";
+    return !type || type === "movie";
+  });
+
+  const candidates = movieOnly.length > 0 ? movieOnly : rawResults;
+  const targetYear = getYear(movie.release_date);
+  const exactYearMatch = candidates.find((item) => String(item?.year || "") === targetYear);
+  const chosen = exactYearMatch || candidates[0];
+  const parsedId = Number(chosen?.id);
+  return Number.isFinite(parsedId) && parsedId > 0 ? parsedId : null;
+}
+
+function normalizeWatchmodeSources(payload) {
+  const sources = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.sources)
+      ? payload.sources
+      : [];
+
+  const seen = new Set();
+  const providers = [];
+
+  for (const source of sources) {
+    const name = String(
+      source?.name
+      || source?.source_name
+      || source?.display_name
+      || source?.source
+      || ""
+    ).trim();
+    if (!name) {
+      continue;
+    }
+
+    const serviceType = String(source?.type || source?.access_type || "").trim().toLowerCase();
+    const webUrl = String(source?.web_url || source?.url || "").trim();
+    const key = `${name.toLowerCase()}|${serviceType}|${webUrl}`;
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+
+    const typeLabel = serviceType === "sub"
+      ? "Subscription"
+      : serviceType === "free"
+        ? "Free"
+        : serviceType === "rent"
+          ? "Rent"
+          : serviceType === "buy"
+            ? "Buy"
+            : serviceType === "tv_everywhere"
+              ? "TV Everywhere"
+              : serviceType ? serviceType.toUpperCase() : "";
+
+    providers.push({
+      name,
+      typeLabel,
+      url: webUrl,
+    });
+  }
+
+  providers.sort((a, b) => a.name.localeCompare(b.name));
+  return providers;
+}
+
+function renderWatchProviders(container, providers) {
+  const list = makeElement("ul", "movie-watch-list");
+
+  for (const provider of providers) {
+    const item = makeElement("li", "movie-watch-item");
+    const text = provider.typeLabel ? `${provider.name} (${provider.typeLabel})` : provider.name;
+
+    if (provider.url) {
+      const link = makeElement("a", "movie-watch-link", text);
+      link.href = provider.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      item.appendChild(link);
+    } else {
+      item.textContent = text;
+    }
+
+    list.appendChild(item);
+  }
+
+  container.replaceChildren(list);
+}
+
+async function fetchJsonOrThrow(endpoint, fallbackMessage) {
+  const response = await fetch(endpoint);
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const message = payload?.status_message || payload?.message || fallbackMessage;
+    throw new Error(message);
+  }
+
+  return payload;
+}
+
+async function loadWatchProvidersForMovie(movie, container) {
+  const watchmodeConfig = getWatchmodeConfig();
+  if (!watchmodeConfig.apiKey) {
+    setWatchProvidersMessage(container, "Where-to-watch data unavailable. Add WATCHMODE_API_KEY in js/supabase-config.js.");
+    return;
+  }
+
+  try {
+    const baseUrl = watchmodeConfig.apiBaseUrl.replace(/\/+$/, "");
+    const encodedApiKey = encodeURIComponent(watchmodeConfig.apiKey);
+    const tmdbMovieId = Number(movie.id);
+    let titleId = null;
+    let tmdbLookupError = "";
+
+    if (Number.isFinite(tmdbMovieId) && tmdbMovieId > 0) {
+      const tmdbSearchEndpoint = `${baseUrl}/search/?apiKey=${encodedApiKey}&search_field=tmdb_movie_id&search_value=${encodeURIComponent(String(tmdbMovieId))}&types=movie`;
+      try {
+        const tmdbLookupPayload = await fetchJsonOrThrow(tmdbSearchEndpoint, "Watchmode TMDB lookup failed.");
+        titleId = extractWatchmodeTitleId(tmdbLookupPayload, movie);
+      } catch (error) {
+        tmdbLookupError = error instanceof Error ? error.message : "TMDB lookup failed.";
+      }
+    }
+
+    if (!titleId) {
+      const year = getYear(movie.release_date);
+      const searchText = `${movie.title || ""}${year !== "Unknown" ? ` ${year}` : ""}`.trim();
+      const titleSearchEndpoint = `${baseUrl}/search/?apiKey=${encodedApiKey}&search_field=name&search_value=${encodeURIComponent(searchText)}&types=movie`;
+      const titleLookupPayload = await fetchJsonOrThrow(titleSearchEndpoint, "Watchmode title lookup failed.");
+      titleId = extractWatchmodeTitleId(titleLookupPayload, movie);
+
+      if (!titleId) {
+        setWatchProvidersMessage(container, "No streaming provider data found for this title.");
+        return;
+      }
+    }
+
+    const sourcesEndpoint = `${baseUrl}/title/${encodeURIComponent(String(titleId))}/sources/?apiKey=${encodedApiKey}&regions=US`;
+    const sourcesPayload = await fetchJsonOrThrow(sourcesEndpoint, "Could not load streaming providers.");
+    const providers = normalizeWatchmodeSources(sourcesPayload);
+
+    if (providers.length === 0) {
+      const suffix = tmdbLookupError ? ` (${tmdbLookupError})` : "";
+      setWatchProvidersMessage(container, `No providers available for this movie right now.${suffix}`);
+      return;
+    }
+
+    renderWatchProviders(container, providers);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not load where-to-watch data.";
+    setWatchProvidersMessage(container, `Could not load where to watch: ${message}`);
+  }
 }
 
 async function loadTrailerForMovie(movie, frame) {
@@ -534,6 +728,10 @@ function renderMovieDetail(movie) {
     toggleFavoriteMovie(movie);
   });
   content.appendChild(favoriteToggleButton);
+
+  const whereToWatch = createWhereToWatchSection();
+  content.appendChild(whereToWatch.section);
+  void loadWatchProvidersForMovie(movie, whereToWatch.providers);
 
   movieDetailCard.appendChild(poster);
   movieDetailCard.appendChild(content);

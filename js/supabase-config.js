@@ -4,6 +4,8 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_API_KEY = "0b615fd08549b8b6e1416543024f6940";
 const YOUTUBE_API_KEY = "AIzaSyDtH8MJh9nPluR7ehCVp43OyyZGPX2Kn8M";
+const WATCHMODE_API_BASE_URL = "https://api.watchmode.com/v1";
+const WATCHMODE_API_KEY = "coU9wUGIsvYNQXnAtFhhrxAx1zVd532ICmDt7fM6";
 
 if (!window.supabase || typeof window.supabase.createClient !== "function") {
   throw new Error("Supabase SDK failed to load.");
@@ -22,6 +24,10 @@ window.appConfig = {
   },
   youtube: {
     apiKey: YOUTUBE_API_KEY,
+  },
+  watchmode: {
+    apiBaseUrl: WATCHMODE_API_BASE_URL,
+    apiKey: WATCHMODE_API_KEY,
   },
 };
 
