@@ -39,6 +39,8 @@ const SUPABASE_ANON_KEY = "your-anon-key";
 const TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_API_KEY = "your-tmdb-api-key";
 const YOUTUBE_API_KEY = "your-youtube-api-key";
+const WATCHMODE_API_BASE_URL = "https://api.watchmode.com/v1";
+const WATCHMODE_API_KEY = "your-watchmode-api-key";
 ```
 
 2. Open `auth.html` and sign in.

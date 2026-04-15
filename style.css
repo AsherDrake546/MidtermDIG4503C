@@ -807,6 +807,40 @@
   font-weight: 600;
 }
 
+.movie-watch-section {
+  margin-top: 1rem;
+}
+
+.movie-watch-heading {
+  font-size: 1.05rem;
+}
+
+.movie-watch-providers {
+  margin-top: 0.45rem;
+}
+
+.movie-watch-status {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.movie-watch-list {
+  display: grid;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.movie-watch-item {
+  color: var(--text-primary);
+}
+
+.movie-watch-link {
+  color: var(--accent-alt);
+  font-weight: 600;
+}
+
 .write-review-btn {
   margin-top: 0.9rem;
 }
