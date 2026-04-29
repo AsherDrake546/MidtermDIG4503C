@@ -1,37 +1,65 @@
-# KinoRate - DIG4503C Midterm Project
+# KinoRate
 
-**KinoRate** is a Letterboxd-style movie review web application built with vanilla JavaScript and Supabase Auth.
+KinoRate is a Letterboxd-style movie web app where authenticated users can search movies, write reviews, manage a top-five favorites list, and build watch lists.
 
-## Current Status
+## Features
 
-### Phase 1: Completed
-- User account signup/login via Supabase Auth
-- Client-side session guards for protected page routing
-- Logout from protected pages
-
-### Phase 2: In Progress
-**Movie Search and Reviews**
-
-- [x] Connect to TMDB API for movie search (connection test page)
-- [ ] Display movie results with poster, title, and year
-- [ ] Write a review with star rating and text
-- [ ] Save reviews to Supabase database
-- [ ] Edit and delete your own reviews
+- Email/password auth with Supabase and protected routes
+- Movie search with typeahead suggestions (TMDB)
+- Movie detail pages with cast, director, trailer (YouTube), and streaming availability (Watchmode)
+- Per-movie reviews with 1-10 ratings and review text
+- User profiles with editable username, avatar URL, and bio
+- User search, public profile pages, and profile-linked reviews
+- Top five favorite movies per user
+- Custom watch lists with add/remove and watched toggles
+- Home feed for recent reviews and highest-rated movies
 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Auth + Session | Supabase Auth (JS SDK) |
-| Movie Data | TMDB API |
-| Frontend | HTML5, CSS3, JavaScript |
-| Hosting | GitHub Pages |
+| --- | --- |
+| Frontend | HTML, CSS, Vanilla JavaScript |
+| Auth + DB | Supabase Auth + Postgres |
+| Movie Metadata | TMDB API |
+| Trailers | YouTube Data API |
+| Streaming Sources | Watchmode API |
+| Hosting | GitHub Pages (or any static host) |
 
-## Running Locally
+## Project Structure
 
-You can run this as a static site.
+```text
+.
+├── auth.html
+├── index.html
+├── search.html
+├── movie.html
+├── user.html
+├── watchlist.html
+├── style.css
+└── js/
+    ├── auth.js
+    ├── index-search.js
+    ├── movie.js
+    ├── search.js
+    ├── user.js
+    ├── watchlist.js
+    ├── supabase-config.example.js
+    └── supabase-config.js
+```
 
-1. Create `js/supabase-config.js` from `js/supabase-config.example.js`, then fill in your credentials and API key:
+## Local Setup
+
+1. Copy the config template:
+
+```bash
+# PowerShell
+Copy-Item js\supabase-config.example.js js\supabase-config.js
+
+# macOS/Linux
+cp js/supabase-config.example.js js/supabase-config.js
+```
+
+2. Fill in your keys in `js/supabase-config.js`:
 
 ```js
 const SUPABASE_URL = "your-project-url";
@@ -43,27 +71,32 @@ const WATCHMODE_API_BASE_URL = "https://api.watchmode.com/v1";
 const WATCHMODE_API_KEY = "your-watchmode-api-key";
 ```
 
-2. Open `auth.html` and sign in.
-3. Navigate to `search.html` to verify TMDB connectivity.
+3. Open `auth.html` through a local static server (or deploy and open that URL).
+4. Sign up, log in, and start from `index.html`.
 
-## Deploying to GitHub Pages
+## Required Supabase Schema
 
-1. Push this repo to GitHub.
-2. In repository settings, open **Pages**.
-3. Set source to **Deploy from a branch**.
-4. Choose branch (usually `main`) and folder `/ (root)`.
-5. Save and wait for deployment.
-6. Visit the generated Pages URL and open `auth.html`.
+This app expects these tables:
 
-## Supabase Profiles Setup (for public user pages)
+- `profiles`
+- `movie_reviews`
+- `user_favorites`
+- `watch_lists`
+- `watch_list_items`
 
-Run this once in Supabase SQL Editor:
+And these RPC functions:
+
+- `add_user_favorite(p_movie_id, p_movie_title, p_poster_path)`  
+  Adds a favorite for the authenticated user and enforces top-five rules.
+- `update_profile_and_review_usernames(p_user_id, p_username, p_avatar_url, p_bio)`  
+  Updates profile fields and keeps review usernames in sync.
+
+### Profiles setup (minimum required)
 
 ```sql
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text not null unique,
-  display_name text,
   bio text,
   avatar_url text,
   created_at timestamptz not null default now(),
@@ -97,48 +130,13 @@ drop trigger if exists on_auth_user_created_profile on auth.users;
 create trigger on_auth_user_created_profile
 after insert on auth.users
 for each row execute procedure public.handle_new_user_profile();
-
-alter table public.profiles enable row level security;
-
-drop policy if exists "profiles public read" on public.profiles;
-create policy "profiles public read"
-on public.profiles
-for select
-to authenticated
-using (true);
-
-drop policy if exists "profiles owner insert" on public.profiles;
-create policy "profiles owner insert"
-on public.profiles
-for insert
-to authenticated
-with check (auth.uid() = id);
-
-drop policy if exists "profiles owner update" on public.profiles;
-create policy "profiles owner update"
-on public.profiles
-for update
-to authenticated
-using (auth.uid() = id)
-with check (auth.uid() = id);
-
 ```
 
-The app now reads usernames from `profiles` for user search and nav display, with fallback to email prefix.
+## Deployment
 
-## Project Structure
+For GitHub Pages:
 
-```
-.
-├── index.html              # Protected home page
-├── auth.html               # Signup/login page
-├── search.html             # Phase 2 movie search scaffold + TMDB health check
-├── style.css               # Shared styling
-└── js/
-    ├── supabase-config.example.js  # Template config (safe to commit)
-    ├── supabase-config.js          # Local secrets (gitignored)
-    ├── auth.js                     # Auth logic and route guards
-    ├── index-search.js             # Index typeahead search
-    └── search.js                   # TMDB connection test logic
-```
-
+1. Push the project to GitHub.
+2. Enable **Settings → Pages**.
+3. Deploy from your main branch root.
+4. Open the deployed `auth.html` page.
